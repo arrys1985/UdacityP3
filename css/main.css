@@ -1,0 +1,20 @@
+#map {
+    height:50vh;
+}  
+
+body {
+    background: #707070;
+    font: 22px Helvetica;
+}   
+
+@media screen and (min-width:600px) {
+  nav {
+    float: left;
+    width: 25%;
+  }
+}
+@media screen and (max-width:599px) {
+  nav {
+    display: inline;
+  }
+}
