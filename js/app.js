@@ -98,7 +98,7 @@ var AppViewModel = function(){
         });
         return result;
     });
-    this.ListClick = function(place){
+    this.listClick = function(place){
         google.maps.event.trigger(place.marker, "click");
     }
 }
