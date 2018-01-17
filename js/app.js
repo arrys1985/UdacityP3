@@ -3,27 +3,27 @@ var map, infoWindow;
 var apiUrl = "http://api.nytimes.com/svc/search/v2/articlesearch.json?sort=newest&api-key=762c55cae5dc4fe2a7404eee42fdddeb&q=";
 
 var placesDS = [{
-        position: { lat: 35.6927706, lng: 139.7311532 },
+        placePosition: { lat: 35.6927706, lng: 139.7311532 },
         title: "防衛省",
         search: "5-1 Ichigayahonmurachō, Shinjuku-ku, Tōkyō-to 162-8801日本"
     },
     {
-        position: { lat: 35.6961956, lng: 139.7366887 },
+        placePosition: { lat: 35.6961956, lng: 139.7366887 },
         title: "法政大学",
         search: "日本〒162-0843 Tōkyō-to, Shinjuku-ku, Ichigayatamachi, 2 Chome−３３"
     },
     {
-        position: { lat: 35.6953001, lng: 139.7315739 },
+        placePosition: { lat: 35.6953001, lng: 139.7315739 },
         title: "日本大学",
         search: "1 Chome-1-1 Ichigayakagachō, Shinjuku-ku, Tōkyō-to 162-8001日本"
     },
     {
-        position: { lat: 35.6906062, lng: 139.7292717 },
+        placePosition: { lat: 35.6906062, lng: 139.7292717 },
         title: "大日本印刷",
         search: "日本〒162-0844 Tōkyō-to, Shinjuku-ku, Ichigayahachimanchō, １５"
     },
     {
-        position: { lat: 35.6974045, lng: 139.733663 },
+        placePosition: { lat: 35.6974045, lng: 139.733663 },
         title: "加藤医院",
         search: "7 Fukuromachi, Shinjuku-ku, Tōkyō-to 162-0828日本"
     }
@@ -33,7 +33,7 @@ var Place = function(data) {
     var tp = this;
 
     this.title = data.title;
-    this.position = data.position;
+    this.placePosition = data.placePosition;
     
     this.vsrult = ko.computed(function(){
         var thePlace = tp.title.toLowerCase();
@@ -42,7 +42,7 @@ var Place = function(data) {
     });
 
     this.marker = new google.maps.Marker({
-        position: tp.position,
+        position: tp.placePosition,
         title: tp.title,
         animation: google.maps.Animation.DROP
     });
@@ -89,7 +89,7 @@ var AppViewModel = function(){
         tp.placesList.forEach(function(place){
             if(place.vsrult()){
                 result.push(place);
-                place.marker.setMap(map, place.position); 
+                place.marker.setMap(map, place.placePosition); 
             }
             else {
                 place.marker.set(null);
@@ -104,7 +104,7 @@ var AppViewModel = function(){
 }
 
 function start(){
-    map = new google.maps.Map(document.getElementById("map"), {center: placesDS[2].position, zoom: 15});
+    map = new google.maps.Map(document.getElementById("map"), {center: placesDS[2].placePosition, zoom: 15});
     infoWindow = new google.maps.InfoWindow();
     ko.applyBindings (new AppViewModel());
 }
