@@ -1,8 +1,8 @@
 var filterText = ko.observable("");
 var map, infoWindow;
-var apiUrl = "http://api.nytimes.com/svc/search/v2/articlesearch.json?sort=newest&api-key=f7e8a625301e4a5eb74d4f10564eddd3&q=";
+var apiUrl = "http://api.nytimes.com/svc/search/v2/articlesearch.json?sort=newest&api-key=762c55cae5dc4fe2a7404eee42fdddeb&q=";
 
-var placesData = [{
+var placesDS = [{
         position: { lat: 35.6927706, lng: 139.7311532 },
         title: "防衛省",
         search: "5-1 Ichigayahonmurachō, Shinjuku-ku, Tōkyō-to 162-8801日本"
@@ -30,64 +30,64 @@ var placesData = [{
 ];
 
 var Place = function(data) {
-    var self = this;
+    var tp = this;
 
     this.title = data.title;
     this.position = data.position;
-
-    this.visible = ko.computed(function(){
-        var placeName = self.title.toLowerCase();
-        var re = filterText().toLowerCase();
-        return (placeName.indexOf(re) != -1)
+    
+    this.vsrult = ko.computed(function(){
+        var thePlace = tp.title.toLowerCase();
+        var c = filterText().toLowerCase();
+        return (thePlace.indexOf(c) != -1)
     });
 
     this.marker = new google.maps.Marker({
-        position: self.position,
-        title: self.title,
+        position: tp.position,
+        title: tp.title,
         animation: google.maps.Animation.DROP
     });
         // 打开InfoWindow
-    google.maps.event.addListener(self.marker, "click", function(){
-        infoWindow.setContent(self.title);
-        infoWindow.open(map, self.marker);
+    google.maps.event.addListener(tp.marker, "click", function(){
+        infoWindow.setContent(tp.title);
+        infoWindow.open(map, tp.marker);
     
         // 图标点开时显示跳跃动画
-        if (self.marker.getAnimation() != null) {
-            self.marker.setAnimation(null);
+        if (tp.marker.getAnimation() != null) {
+            tp.marker.setAnimation(null);
         }
         else {
-            self.marker.setAnimation(google.maps.Animation.BOUNCE);
+            tp.marker.setAnimation(google.maps.Animation.BOUNCE);
             setTimeout(function(){
-                self.marker.setAnimation(null);
+                tp.marker.setAnimation(null);
             },2000);
         }
 
         // ajax请求数据
         $.ajax({
-            url: apiUrl + self.title,
+            url: apiUrl + tp.search,
             dataType: "json",
             timeout: 5000
         }).done(function(data){
             infoWindow.setContent(data.response.docs[0].snippet);
-            infoWindow.open(map, self.marker)
+            infoWindow.open(map, tp.marker)
         }).fail(function(){
             alert("API加载错误");
         });
     });
 }
 
-var ViewModel = function(){
-    var self = this;
+var AppViewModel = function(){
+    var tp = this;
 
     this.placesList = [];
-    placesData.forEach(function(data){
-        self.placesList.push(new Place(data))
+    placesDS.forEach(function(data){
+        tp.placesList.push(new Place(data))
     });
 
     this.filteredList = ko.computed(function(){
         var result = [];
-        self.placesList.forEach(function(place){
-            if(place.visible()){
+        tp.placesList.forEach(function(place){
+            if(place.vsrult()){
                 result.push(place);
                 place.marker.setMap(map, place.position); 
             }
@@ -104,9 +104,9 @@ var ViewModel = function(){
 }
 
 function start(){
-    map = new google.maps.Map(document.getElementById("map"), {center: placesData[2].position, zoom: 13});
+    map = new google.maps.Map(document.getElementById("map"), {center: placesDS[2].position, zoom: 15});
     infoWindow = new google.maps.InfoWindow();
-    ko.applyBindings (new ViewModel());
+    ko.applyBindings (new AppViewModel());
 }
 
 function googleEroor() {
